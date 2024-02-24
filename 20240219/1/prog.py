@@ -34,7 +34,7 @@ def show_last_commit(path, branch_name):
     print()
     print(content_parts[5])
     
-    return tree_id
+    return tree_id, commit_id
 
 def show_tree(path, tree_id):
     if path[-1] == '/':
@@ -54,6 +54,22 @@ def show_tree(path, tree_id):
             object_type = zlib.decompress(object_file.read()).partition(b' ')[0].decode()
         print(object_type, object_id + '\t' + object_name)
 
+def show_tree_of_each_commit(path, commit_id):
+    while commit_id:
+        path_to_commit = path + f'/.git/objects/{commit_id[0:2]}/' + commit_id[2:]
+        with open(path_to_commit, 'rb') as commit_file:
+            bulk = zlib.decompress(commit_file.read())
+        _, _, content = bulk.partition(b'\x00')
+        content_parts = content.decode().split('\n')
+        if content_parts[1].split()[0] != 'parent':
+            break
+        parent_id, tree_id = content_parts[1].split()[1], content_parts[0].split()[1]
+
+        print(f'TREE for commit {commit_id}')
+        show_tree(path, tree_id)
+
+        commit_id = parent_id
+
 def main():
     if len(sys.argv) == 2:
         path = sys.argv[1]
@@ -61,6 +77,8 @@ def main():
     elif len(sys.argv) == 3:
         path = sys.argv[1]
         branch_name = sys.argv[2]
-        tree_id = show_last_commit(path, branch_name)
+        tree_id, commit_id = show_last_commit(path, branch_name)
         show_tree(path, tree_id)
+        show_tree_of_each_commit(path, commit_id)
+
 main()
