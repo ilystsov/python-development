@@ -38,7 +38,10 @@ class MultiUserDungeon:
             self.encounter(self.player.x, self.player.y)
 
     def encounter(self, x: int, y: int) -> None:
-        print(cowsay.cowsay(self.monsters[(x, y)].greetings_message))
+        monster = self.monsters[(x, y)]
+        text = monster.greetings_message
+        name = monster.name
+        print(cowsay.cowsay(text, cow=name))
 
     def add_monster(self, name: str, x: int, y: int, greetings_message: str) -> None:
         if name not in cowsay.list_cows():
