@@ -1,3 +1,5 @@
+import shlex
+
 import cowsay
 
 
@@ -56,7 +58,7 @@ class MultiUserDungeon:
     def play(self) -> None:
         while True:
             try:
-                command = input().split()
+                command = shlex.split(input())
             except EOFError:
                 break
 
