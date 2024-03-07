@@ -1,4 +1,22 @@
+import io
+
 import cowsay
+
+
+jgsbat = cowsay.read_dot_cow(io.StringIO('''
+$the_cow = <<EOC;
+         $thoughts
+          $thoughts
+    ,_                    _,
+    ) '-._  ,_    _,  _.-' (
+    )  _.-'.|\\--//|.'-._  (
+     )'   .'\/o\/o\/'.   `(
+      ) .' . \====/ . '. (
+       )  / <<    >> \  (
+        '-._/``  ``\_.-'
+  jgs     __\\'--'//__
+         (((""`  `"")))EOC
+'''))
 
 
 class Player:
@@ -17,6 +35,7 @@ class MultiUserDungeon:
         self.field_size = field_size
         self.player = Player()
         self.monsters = {}
+        self.custom_monsters = {'jgsbat': jgsbat}
 
     def move_player(self, direction: str) -> None:
         delta_x, delta_y = 0, 0
@@ -41,10 +60,13 @@ class MultiUserDungeon:
         monster = self.monsters[(x, y)]
         text = monster.greetings_message
         name = monster.name
-        print(cowsay.cowsay(text, cow=name))
+        if name in self.custom_monsters:
+            print(cowsay.cowsay(text, cowfile=self.custom_monsters[name]))
+        else:
+            print(cowsay.cowsay(text, cow=name))
 
     def add_monster(self, name: str, x: int, y: int, greetings_message: str) -> None:
-        if name not in cowsay.list_cows():
+        if name not in cowsay.list_cows() and name not in self.custom_monsters:
             print("Cannot add unknown monster")
             return
 
