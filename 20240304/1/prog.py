@@ -76,6 +76,7 @@ class MultiUserDungeon:
         self.monsters[(x, y)] = Monster(name, greetings_message)
 
     def play(self) -> None:
+        print("<<< Welcome to Python-MUD 0.1 >>>")
         while True:
             try:
                 command = input().split()
