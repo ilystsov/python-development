@@ -1,4 +1,5 @@
 import io
+import shlex
 
 import cowsay
 
@@ -79,7 +80,7 @@ class MultiUserDungeon:
         print("<<< Welcome to Python-MUD 0.1 >>>")
         while True:
             try:
-                command = input().split()
+                command = shlex.split(input())
             except EOFError:
                 break
 
