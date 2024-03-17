@@ -1,6 +1,7 @@
 import io
 import cowsay
 import shlex
+import cmd
 
 
 jgsbat = cowsay.read_dot_cow(io.StringIO('''
@@ -30,6 +31,7 @@ class Monster:
         self.greetings_message: str = greetings_message
         self.name = name
         self.hitpoints = hitpoints
+
 
 
 class MultiUserDungeon:
@@ -136,5 +138,23 @@ class MultiUserDungeon:
                     print("Invalid command")
 
 
+class MultiUserDungeonShell:
+    def __init__(self, game: MultiUserDungeon):
+        self.game = game
+
+    def do_up(self, arg):
+        self.game.move_player('up')
+
+    def do_down(self, arg):
+        self.game.move_player('down')
+
+    def do_left(self, arg):
+        self.game.move_player('left')
+
+    def do_right(self, arg):
+        self.game.move_player('right')
+
+
 if __name__ == "__main__":
-    MultiUserDungeon(10).play()
+    multi_user_dungeon = MultiUserDungeon(10)
+    MultiUserDungeonShell(multi_user_dungeon).cmdloop()
