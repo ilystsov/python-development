@@ -72,10 +72,13 @@ class MultiUserDungeon:
         else:
             print(cowsay.cowsay(text, cow=name))
 
-    def attack(self) -> None:
+    def attack(self, name: str) -> None:
         player_coordinates = (self.player.x, self.player.y)
-        if player_coordinates not in self.monsters:
-            print("No monster here")
+        if (
+                player_coordinates not in self.monsters
+                or self.monsters[player_coordinates].name != name
+        ):
+            print(f"No {name} here")
             return
 
         base_damage = 10
@@ -165,7 +168,19 @@ class MultiUserDungeonShell(cmd.Cmd):
             print("Invalid arguments")
 
     def do_attack(self, arg: str) -> None:
-        self.game.attack()
+        params = shlex.split(arg)
+        if len(params) != 1:
+            print("Invalid arguments")
+            return
+        name = params[0]
+        self.game.attack(name)
+
+    def complete_attack(self, text, line, begidx, endidx):
+        all_monsters = cowsay.list_cows() + list(self.game.custom_monsters.keys())
+        return [
+            monster_name for monster_name in all_monsters
+            if monster_name.startswith(text)
+        ]
 
     def do_EOF(self, arg: str) -> bool:
         return True
