@@ -73,10 +73,13 @@ class MultiUserDungeon:
         else:
             print(cowsay.cowsay(text, cow=name))
 
-    def attack(self, weapon: str) -> None:
+    def attack(self, weapon: str, name: str) -> None:
         player_coordinates = (self.player.x, self.player.y)
-        if player_coordinates not in self.monsters:
-            print("No monster here")
+        if (
+                player_coordinates not in self.monsters
+                or self.monsters[player_coordinates].name != name
+        ):
+            print(f"No {name} here")
             return
 
         monster = self.monsters[player_coordinates]
@@ -135,15 +138,15 @@ class MultiUserDungeon:
                 raise ValueError
         return name, hitpoints, x, y, greetings_message
 
-    def parse_attack(self, params: list) -> str:
+    def parse_attack(self, params: list) -> tuple[str, str]:
         base_weapon = 'sword'
         match params:
-            case ['with', weapon]:
+            case [name, 'with', weapon]:
                 if weapon not in self.weapons:
                     raise ValueError("Unknown weapon")
-                return weapon
-            case []:
-                return base_weapon
+                return weapon, name
+            case [name]:
+                return base_weapon, name
             case _:
                 raise ValueError("Invalid arguments")
 
@@ -179,13 +182,22 @@ class MultiUserDungeonShell(cmd.Cmd):
     def do_attack(self, arg: str) -> None:
         params = shlex.split(arg)
         try:
-            weapon = self.game.parse_attack(params)
-            self.game.attack(weapon)
+            weapon, name = self.game.parse_attack(params)
+            self.game.attack(weapon, name)
         except ValueError as error:
             print(error)
 
     def complete_attack(self, text, line, begidx, endidx):
-        return [weapon for weapon in self.game.weapons if weapon.startswith(text)]
+        words = (line[:endidx] + ".").split()
+        if len(words) == 2:
+            all_monsters = cowsay.list_cows() + list(self.game.custom_monsters.keys())
+            return [
+                monster_name for monster_name in all_monsters
+                if monster_name.startswith(text)
+            ]
+
+        if len(words) == 4:
+            return [weapon for weapon in self.game.weapons if weapon.startswith(text)]
 
     def do_EOF(self, arg: str) -> bool:
         return True
