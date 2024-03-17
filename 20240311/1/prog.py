@@ -115,31 +115,13 @@ class MultiUserDungeon:
                 raise ValueError
         return name, hitpoints, x, y, greetings_message
 
-    def play(self) -> None:
-        print("<<< Welcome to Python-MUD 0.1 >>>")
-        while True:
-            try:
-                command = shlex.split(input())
-            except EOFError:
-                break
 
-            match command:
-                case [("up" | "down" | "left" | "right") as direction]:
-                    self.move_player(direction)
-                case ["addmon", *params]:
-                    try:
-                        name, hitpoints, x, y, greetings_message = self.parse_addmon(
-                            params
-                        )
-                        self.add_monster(name, hitpoints, x, y, greetings_message)
-                    except ValueError:
-                        print("Invalid arguments")
-                case _:
-                    print("Invalid command")
+class MultiUserDungeonShell(cmd.Cmd):
+    intro = "<<< Welcome to Python-MUD 0.1 >>>"
+    prompt = 'Python-MUD >> '
 
-
-class MultiUserDungeonShell:
     def __init__(self, game: MultiUserDungeon):
+        super().__init__()
         self.game = game
 
     def do_up(self, arg):
@@ -153,6 +135,19 @@ class MultiUserDungeonShell:
 
     def do_right(self, arg):
         self.game.move_player('right')
+
+    def do_addmon(self, arg):
+        params = shlex.split(arg)
+        try:
+            name, hitpoints, x, y, greetings_message = self.game.parse_addmon(
+                params
+            )
+            self.game.add_monster(name, hitpoints, x, y, greetings_message)
+        except ValueError:
+            print("Invalid arguments")
+
+    def do_EOF(self, args):
+        return True
 
 
 if __name__ == "__main__":
