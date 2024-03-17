@@ -4,7 +4,9 @@ import shlex
 import cmd
 
 
-jgsbat = cowsay.read_dot_cow(io.StringIO('''
+jgsbat = cowsay.read_dot_cow(
+    io.StringIO(
+        """
 $the_cow = <<EOC;
          $thoughts
           $thoughts
@@ -17,7 +19,9 @@ $the_cow = <<EOC;
         '-._/``  ``\_.-'
   jgs     __\\'--'//__
          (((""`  `"")))EOC
-'''))
+"""
+    )
+)
 
 
 class Player:
@@ -33,13 +37,12 @@ class Monster:
         self.hitpoints = hitpoints
 
 
-
 class MultiUserDungeon:
     def __init__(self, field_size: int) -> None:
-        self.field_size = field_size
-        self.player = Player()
-        self.monsters = {}
-        self.custom_monsters = {'jgsbat': jgsbat}
+        self.field_size: int = field_size
+        self.player: Player = Player()
+        self.monsters: dict[tuple[int, int], Monster] = {}
+        self.custom_monsters: dict[str, Monster] = {"jgsbat": jgsbat}
 
     def move_player(self, direction: str) -> None:
         delta_x, delta_y = 0, 0
@@ -68,6 +71,23 @@ class MultiUserDungeon:
             print(cowsay.cowsay(text, cowfile=self.custom_monsters[name]))
         else:
             print(cowsay.cowsay(text, cow=name))
+
+    def attack(self) -> None:
+        player_coordinates = (self.player.x, self.player.y)
+        if player_coordinates not in self.monsters:
+            print("No monster here")
+            return
+
+        base_damage = 10
+        monster = self.monsters[player_coordinates]
+        damage = min(monster.hitpoints, base_damage)
+        print(f"Attacked {monster.name},  damage {damage} hp")
+        monster.hitpoints -= damage
+        if monster.hitpoints == 0:
+            print(f"{monster.name} died")
+            del self.monsters[player_coordinates]
+        else:
+            print(f"{monster.name} now has {monster.hitpoints}")
 
     def add_monster(
         self, name: str, hitpoints: int, x: int, y: int, greetings_message: str
@@ -103,7 +123,8 @@ class MultiUserDungeon:
                 param_pos += 2
             elif params[param_pos] == "coords":
                 if (
-                    (x is not None) or (y is not None)
+                    (x is not None)
+                    or (y is not None)
                     or (not params[param_pos + 1].isdigit())
                     or (not params[param_pos + 2].isdigit())
                 ):
@@ -117,33 +138,34 @@ class MultiUserDungeon:
 
 class MultiUserDungeonShell(cmd.Cmd):
     intro = "<<< Welcome to Python-MUD 0.1 >>>"
-    prompt = 'Python-MUD >> '
+    prompt = "Python-MUD >> "
 
     def __init__(self, game: MultiUserDungeon) -> None:
         super().__init__()
         self.game = game
 
     def do_up(self, arg: str) -> None:
-        self.game.move_player('up')
+        self.game.move_player("up")
 
     def do_down(self, arg: str) -> None:
-        self.game.move_player('down')
+        self.game.move_player("down")
 
     def do_left(self, arg: str) -> None:
-        self.game.move_player('left')
+        self.game.move_player("left")
 
     def do_right(self, arg: str) -> None:
-        self.game.move_player('right')
+        self.game.move_player("right")
 
     def do_addmon(self, arg: str) -> None:
         params = shlex.split(arg)
         try:
-            name, hitpoints, x, y, greetings_message = self.game.parse_addmon(
-                params
-            )
+            name, hitpoints, x, y, greetings_message = self.game.parse_addmon(params)
             self.game.add_monster(name, hitpoints, x, y, greetings_message)
         except ValueError:
             print("Invalid arguments")
+
+    def do_attack(self, arg: str) -> None:
+        self.game.attack()
 
     def do_EOF(self, arg: str) -> bool:
         return True
