@@ -69,7 +69,6 @@ class MultiUserDungeon:
         else:
             print(cowsay.cowsay(text, cow=name))
 
-
     def add_monster(
         self, name: str, hitpoints: int, x: int, y: int, greetings_message: str
     ) -> None:
@@ -120,23 +119,23 @@ class MultiUserDungeonShell(cmd.Cmd):
     intro = "<<< Welcome to Python-MUD 0.1 >>>"
     prompt = 'Python-MUD >> '
 
-    def __init__(self, game: MultiUserDungeon):
+    def __init__(self, game: MultiUserDungeon) -> None:
         super().__init__()
         self.game = game
 
-    def do_up(self, arg):
+    def do_up(self, arg: str) -> None:
         self.game.move_player('up')
 
-    def do_down(self, arg):
+    def do_down(self, arg: str) -> None:
         self.game.move_player('down')
 
-    def do_left(self, arg):
+    def do_left(self, arg: str) -> None:
         self.game.move_player('left')
 
-    def do_right(self, arg):
+    def do_right(self, arg: str) -> None:
         self.game.move_player('right')
 
-    def do_addmon(self, arg):
+    def do_addmon(self, arg: str) -> None:
         params = shlex.split(arg)
         try:
             name, hitpoints, x, y, greetings_message = self.game.parse_addmon(
@@ -146,7 +145,7 @@ class MultiUserDungeonShell(cmd.Cmd):
         except ValueError:
             print("Invalid arguments")
 
-    def do_EOF(self, args):
+    def do_EOF(self, arg: str) -> bool:
         return True
 
 
