@@ -147,6 +147,7 @@ class MultiUserDungeon:
             case _:
                 raise ValueError("Invalid arguments")
 
+
 class MultiUserDungeonShell(cmd.Cmd):
     intro = "<<< Welcome to Python-MUD 0.1 >>>"
     prompt = "Python-MUD >> "
@@ -182,6 +183,9 @@ class MultiUserDungeonShell(cmd.Cmd):
             self.game.attack(weapon)
         except ValueError as error:
             print(error)
+
+    def complete_attack(self, text, line, begidx, endidx):
+        return [weapon for weapon in self.game.weapons if weapon.startswith(text)]
 
     def do_EOF(self, arg: str) -> bool:
         return True
