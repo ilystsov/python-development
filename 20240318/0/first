@@ -1,0 +1,57 @@
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  1 Mar16 ?        00:31:08 /sbin/init
+root         2     1  0 Mar16 ?        00:00:01 /init
+root         6     2  0 Mar16 ?        00:02:52 plan9 --control-socket 6 --log-level 4 --server-fd 7 --pipe-fd 9 --log-truncate
+root       110     1  0 Mar16 ?        00:00:02 snapfuse /var/lib/snapd/snaps/core22_1122.snap /snap/core22/1122 -o ro,nodev,allow_other,suid
+root       111     1  0 Mar16 ?        00:00:00 snapfuse /var/lib/snapd/snaps/core22_1033.snap /snap/core22/1033 -o ro,nodev,allow_other,suid
+root       112     1  0 Mar16 ?        00:00:00 snapfuse /var/lib/snapd/snaps/snapd_20671.snap /snap/snapd/20671 -o ro,nodev,allow_other,suid
+root       113     1  0 Mar16 ?        00:00:00 snapfuse /var/lib/snapd/snaps/gtk-common-themes_1535.snap /snap/gtk-common-themes/1535 -o ro,nodev,allow_other,suid
+root       115     1  0 Mar16 ?        00:00:00 snapfuse /var/lib/snapd/snaps/bare_5.snap /snap/bare/5 -o ro,nodev,allow_other,suid
+root       118     1  0 Mar16 ?        00:00:04 snapfuse /var/lib/snapd/snaps/snapd_21184.snap /snap/snapd/21184 -o ro,nodev,allow_other,suid
+root       124     1  0 Mar16 ?        00:00:00 snapfuse /var/lib/snapd/snaps/ubuntu-desktop-installer_1284.snap /snap/ubuntu-desktop-installer/1284 -o ro,nodev,allow_other,suid
+root       126     1  0 Mar16 ?        00:00:03 snapfuse /var/lib/snapd/snaps/ubuntu-desktop-installer_1286.snap /snap/ubuntu-desktop-installer/1286 -o ro,nodev,allow_other,suid
+avahi      191     1  0 Mar16 ?        00:00:00 avahi-daemon: running [DESKTOP-V92J8TS-2.local]
+root       193     1  0 Mar16 ?        00:00:00 /usr/sbin/cron -f -P
+message+   195     1  0 Mar16 ?        00:00:00 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root       199     1  0 Mar16 ?        00:00:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+root       201     1  0 Mar16 ?        00:00:00 /usr/libexec/polkitd --no-debug
+syslog     202     1  0 Mar16 ?        00:00:00 /usr/sbin/rsyslogd -n -iNONE
+root       222     1  0 Mar16 ?        00:00:00 /usr/libexec/udisks2/udisksd
+root       228     1  0 Mar16 ?        00:00:00 /sbin/wpa_supplicant -u -s -O /run/wpa_supplicant
+avahi      240   191  0 Mar16 ?        00:00:00 avahi-daemon: chroot helper
+root       272     1  0 Mar16 ?        00:00:00 /bin/bash /snap/ubuntu-desktop-installer/1286/bin/subiquity-server
+root       275     1  0 Mar16 ?        00:00:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+root       276     1  0 Mar16 ?        00:00:54 /usr/bin/containerd
+root       280     1  0 Mar16 ?        00:00:00 /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
+root       286     1  0 Mar16 tty1     00:00:00 /sbin/agetty -o -p -- \u --noclear tty1 linux
+root       296     1  0 Mar16 ?        00:00:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+root       313     1  0 Mar16 ?        00:00:19 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+root       812   272  0 Mar16 ?        00:00:37 /snap/ubuntu-desktop-installer/1286/usr/bin/python3.10 -m subiquity.cmd.server --use-os-prober --storage-version=2 --postinst-hooks-dir=/snap/ubuntu-desktop-installer/1286/etc/subiquity/postinst.d
+root       825     2  0 Mar16 pts/1    00:00:00 /bin/login -f
+ilya       865     1  0 Mar16 ?        00:00:00 /lib/systemd/systemd --user
+ilya       866   865  0 Mar16 ?        00:00:00 (sd-pam)
+ilya       879   825  0 Mar16 pts/1    00:00:00 -bash
+root      1224     2  0 Mar16 ?        00:00:00 /init
+root      1225  1224  0 Mar16 ?        00:00:00 /init
+ilya      1226  1225  0 Mar16 pts/5    00:00:00 sh
+root      1316     2  0 Mar16 pts/8    00:00:00 /bin/login -f
+root      1342     1  0 Mar16 ?        00:00:00 /lib/systemd/systemd --user
+root      1343  1342  0 Mar16 ?        00:00:00 (sd-pam)
+root      1353  1316  0 Mar16 pts/8    00:00:00 -bash
+root      1402   812  0 Mar16 ?        00:03:57 python3 /snap/ubuntu-desktop-installer/1286/usr/bin/cloud-init status --wait
+root      1516  1224  0 Mar16 ?        00:00:00 /init
+root      1517  1516  0 Mar16 pts/3    00:00:02 /mnt/wsl/docker-desktop/docker-desktop-user-distro proxy --distro-name Ubuntu --docker-desktop-root /mnt/wsl/docker-desktop C:\Program Files\Docker\Docker\resources
+ilya     24973   865  0 Mar17 ?        00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root     94546     1  0 07:25 ?        00:00:00 /lib/systemd/systemd-logind
+root     95050     1  0 07:25 ?        00:00:00 /usr/libexec/packagekitd
+root     95483     1  0 12:32 ?        00:00:01 /usr/lib/snapd/snapd
+systemd+ 95484     1  0 12:32 ?        00:00:00 /lib/systemd/systemd-resolved
+root     95681     1  0 12:48 ?        00:00:00 /lib/systemd/systemd-journald
+root     95682     1  0 12:48 ?        00:00:00 /lib/systemd/systemd-udevd
+root     95734     2  0 12:54 ?        00:00:00 /init
+root     95735 95734  0 12:54 ?        00:00:00 /init
+ilya     95740 95735  0 12:54 pts/0    00:00:00 ./fsnotifier-wsl
+root     95780     2  0 12:54 ?        00:00:00 /init
+root     95781 95780  0 12:54 ?        00:00:00 /init
+ilya     95786 95781  0 12:54 pts/2    00:00:00 -bash
+ilya     99767 95786  0 13:09 pts/2    00:00:00 ps -ef
