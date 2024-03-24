@@ -39,10 +39,11 @@ class MultiUserDungeon:
             return self.player.x, self.player.y, "False", '', ''
 
     def add_monster(self, name, text, hp, x, y):
-        self.monsters[(x, y)] = Monster(name, text, hp)
         if (x, y) in self.monsters:
-            return "True"
-        return "False"
+            replaced_flag = "True"
+        else: replaced_flag = "False"
+        self.monsters[(x, y)] = Monster(name, text, hp)
+        return replaced_flag
 
     def attack(self, weapon, name):
         player_coordinates = (self.player.x, self.player.y)
