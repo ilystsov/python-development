@@ -39,6 +39,12 @@ class MultiUserDungeon:
         else:
             return self.player.x, self.player.y, "False", '', ''
 
+    def add_monster(self, name, text, hp, x, y):
+        self.monsters[(x, y)] = Monster(name, text, hp)
+        if (x, y) in self.monsters:
+            return "True"
+        return "False"
+
     def serve(self, conn, addr):
         with conn:
             while data := conn.recv(1024):
@@ -47,6 +53,10 @@ class MultiUserDungeon:
                         conn.sendall(
                             shlex.join(self.move_player(int(x), int(y))).encode()
                         )
+                    case ["addmon", name, hp, x, y, text]:
+                        conn.sendall(self.add_monster(
+                            name, text, int(hp), int(x), int(y)
+                        ).encode())
 
 if __name__ == "__main__":
     host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
