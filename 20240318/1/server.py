@@ -29,14 +29,14 @@ class MultiUserDungeon:
         name = monster.name
         return name, text
 
-    def move_player(self, delta_x, delta_y):
+    def move_player(self, delta_x, delta_y) -> tuple[str, str, str, str, str]:
         self.player.x = (self.player.x + delta_x) % self.field_size
         self.player.y = (self.player.y + delta_y) % self.field_size
         if (self.player.x, self.player.y) in self.monsters:
             name, text = self.encounter(self.player.x, self.player.y)
-            return self.player.x, self.player.y, "True", name, text
+            return str(self.player.x), str(self.player.y), "True", name, text
         else:
-            return self.player.x, self.player.y, "False", '', ''
+            return str(self.player.x), str(self.player.y), "False", '', ''
 
     def add_monster(self, name, text, hp, x, y):
         if (x, y) in self.monsters:
