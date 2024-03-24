@@ -69,6 +69,58 @@ class MultiUserDungeonShell(cmd.Cmd):
     def do_right(self, arg: str) -> None:
         self.move("right")
 
+    def parse_addmon(self, params: list) -> tuple:
+        expected_params_length = 8
+        if len(params) != expected_params_length:
+            raise ValueError
+        name = params[0]
+        param_pos = 1
+        hitpoints, x, y, greetings_message = [None] * 4
+        while param_pos < expected_params_length:
+            if params[param_pos] == "hello":
+                if greetings_message is not None:
+                    raise ValueError
+                greetings_message = params[param_pos + 1]
+                param_pos += 2
+            elif params[param_pos] == "hp":
+                if (hitpoints is not None) or (not params[param_pos + 1].isdigit()):
+                    raise ValueError
+                hitpoints = int(params[param_pos + 1])
+                if hitpoints <= 0:
+                    raise ValueError
+                param_pos += 2
+            elif params[param_pos] == "coords":
+                if (
+                    (x is not None)
+                    or (y is not None)
+                    or (not params[param_pos + 1].isdigit())
+                    or (not params[param_pos + 2].isdigit())
+                ):
+                    raise ValueError
+                x, y = int(params[param_pos + 1]), int(params[param_pos + 2])
+                param_pos += 3
+            else:
+                raise ValueError
+        return name, hitpoints, x, y, greetings_message
+
+    def add_monster(
+        self, name: str, hitpoints: int, x: int, y: int, greetings_message: str
+    ) -> None:
+        if name not in cowsay.list_cows() and name not in self.custom_monsters:
+            print("Cannot add unknown monster")
+            return
+        self.socket.sendall(f"addmon {name} {x} {y} {greetings_message}".encode())
+        print(f"Added monster {name} to ({x}, {y}) saying {greetings_message}")
+        server_response = shlex.split(self.socket.recv(1024).decode())
+        replaced_flag = server_response
+        if replaced_flag == "True":
+            print("Replaced the old monster")
+
+    def do_addmon(self, arg: str) -> None:
+        params = shlex.split(arg)
+        name, hitpoints, x, y, greetings_message = self.parse_addmon(params)
+        self.add_monster(name, hitpoints, x, y, greetings_message)
+
     def do_EOF(self, arg: str) -> bool:
         return True
 
