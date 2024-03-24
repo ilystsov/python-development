@@ -58,7 +58,7 @@ class MultiUserDungeonShell(cmd.Cmd):
                 print(cowsay.cowsay(monster_message, cow=monster_name))
 
     def do_up(self, arg: str) -> None:
-        self.move("down")
+        self.move("up")
 
     def do_down(self, arg: str) -> None:
         self.move("down")
