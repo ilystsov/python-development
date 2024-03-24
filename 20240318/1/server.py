@@ -22,7 +22,6 @@ class MultiUserDungeon:
         self.player: Player = Player()
         self.monsters: dict[tuple[int, int], Monster] = {}
         self.weapons: dict[str, int] = {'sword': 10, 'spear': 15, 'axe': 20}
-        self.custom_monsters: dict[str, Monster] = {"jgsbat": jgsbat}
 
     def encounter(self, x: int, y: int) -> tuple[str, str]:
         monster = self.monsters[(x, y)]
@@ -45,6 +44,20 @@ class MultiUserDungeon:
             return "True"
         return "False"
 
+    def attack(self, weapon, name):
+        player_coordinates = (self.player.x, self.player.y)
+        if (
+                player_coordinates not in self.monsters
+                or self.monsters[player_coordinates].name != name
+        ):
+            return "False", '', ''
+        monster = self.monsters[player_coordinates]
+        damage = min(monster.hitpoints, self.weapons[weapon])
+        monster.hitpoints -= damage
+        if monster.hitpoints == 0:
+            del self.monsters[player_coordinates]
+        return "True", str(damage), str(monster.hitpoints)
+
     def serve(self, conn, addr):
         with conn:
             while data := conn.recv(1024):
@@ -57,6 +70,11 @@ class MultiUserDungeon:
                         conn.sendall(self.add_monster(
                             name, text, int(hp), int(x), int(y)
                         ).encode())
+                    case ["attack", weapon, name]:
+                        conn.sendall(
+                            shlex.join(self.attack(weapon, name)).encode()
+                        )
+
 
 if __name__ == "__main__":
     host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
