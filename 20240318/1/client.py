@@ -110,7 +110,7 @@ class MultiUserDungeonShell(cmd.Cmd):
             print("Cannot add unknown monster")
             return
 
-        self.socket.sendall(f"addmon {name} {x} {y} {greetings_message}".encode())
+        self.socket.sendall(f"addmon {name} {hitpoints} {x} {y} {greetings_message}".encode())
         print(f"Added monster {name} to ({x}, {y}) saying {greetings_message}")
         server_response = shlex.split(self.socket.recv(1024).decode())
         replaced_flag = server_response
