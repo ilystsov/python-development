@@ -1,0 +1,40 @@
+From 2c07e2923ed0f0b916e1e38d58bbc68012fc8b63 Mon Sep 17 00:00:00 2001
+From: ilya <lystsov.ilya@gmail.com>
+Date: Sun, 24 Mar 2024 23:56:45 +0300
+Subject: [PATCH 08/13] implement addmon command
+
+---
+ 20240318/1/server.py | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/20240318/1/server.py b/20240318/1/server.py
+index 474400b..836d3bb 100644
+--- a/20240318/1/server.py
++++ b/20240318/1/server.py
+@@ -39,6 +39,12 @@ class MultiUserDungeon:
+         else:
+             return self.player.x, self.player.y, "False", '', ''
+ 
++    def add_monster(self, name, text, hp, x, y):
++        self.monsters[(x, y)] = Monster(name, text, hp)
++        if (x, y) in self.monsters:
++            return "True"
++        return "False"
++
+     def serve(self, conn, addr):
+         with conn:
+             while data := conn.recv(1024):
+@@ -47,6 +53,10 @@ class MultiUserDungeon:
+                         conn.sendall(
+                             shlex.join(self.move_player(int(x), int(y))).encode()
+                         )
++                    case ["addmon", name, hp, x, y, text]:
++                        conn.sendall(self.add_monster(
++                            name, text, int(hp), int(x), int(y)
++                        ).encode())
+ 
+ if __name__ == "__main__":
+     host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
+-- 
+2.34.1
+

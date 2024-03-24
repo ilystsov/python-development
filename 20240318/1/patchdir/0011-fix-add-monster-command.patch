@@ -1,0 +1,31 @@
+From 8ebf8e02e01c9e96414e4f8259c1e28e66909d29 Mon Sep 17 00:00:00 2001
+From: ilya <lystsov.ilya@gmail.com>
+Date: Mon, 25 Mar 2024 00:26:05 +0300
+Subject: [PATCH 11/13] fix add monster command
+
+---
+ 20240318/1/server.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/20240318/1/server.py b/20240318/1/server.py
+index 3bcb55e..87883e7 100644
+--- a/20240318/1/server.py
++++ b/20240318/1/server.py
+@@ -39,10 +39,11 @@ class MultiUserDungeon:
+             return self.player.x, self.player.y, "False", '', ''
+ 
+     def add_monster(self, name, text, hp, x, y):
+-        self.monsters[(x, y)] = Monster(name, text, hp)
+         if (x, y) in self.monsters:
+-            return "True"
+-        return "False"
++            replaced_flag = "True"
++        else: replaced_flag = "False"
++        self.monsters[(x, y)] = Monster(name, text, hp)
++        return replaced_flag
+ 
+     def attack(self, weapon, name):
+         player_coordinates = (self.player.x, self.player.y)
+-- 
+2.34.1
+

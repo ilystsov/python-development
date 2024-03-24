@@ -1,0 +1,25 @@
+From 3e3136c0c03df02335be57ca07710ac558e8f593 Mon Sep 17 00:00:00 2001
+From: ilya <lystsov.ilya@gmail.com>
+Date: Sun, 24 Mar 2024 23:15:12 +0300
+Subject: [PATCH 04/13] fix ecnounter flag
+
+---
+ 20240318/1/client.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/20240318/1/client.py b/20240318/1/client.py
+index dc2e3ea..0237d09 100644
+--- a/20240318/1/client.py
++++ b/20240318/1/client.py
+@@ -51,7 +51,7 @@ class MultiUserDungeonShell(cmd.Cmd):
+         server_response = shlex.split(self.socket.recv(1024).decode())
+         new_x, new_y, encounter_flag, monster_name, monster_message = server_response
+         print(f"Moved to ({new_x}, {new_y})")
+-        if encounter_flag:
++        if encounter_flag == "True":
+             if monster_name in self.custom_monsters:
+                 print(cowsay.cowsay(monster_message, cowfile=self.custom_monsters[monster_name]))
+             else:
+-- 
+2.34.1
+

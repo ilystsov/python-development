@@ -1,0 +1,57 @@
+From 31271392ccc6cdcac494ebdc3a880eb3670a3a5f Mon Sep 17 00:00:00 2001
+From: ilya <lystsov.ilya@gmail.com>
+Date: Mon, 25 Mar 2024 00:24:30 +0300
+Subject: [PATCH 10/13] add attack command
+
+---
+ 20240318/1/server.py | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/20240318/1/server.py b/20240318/1/server.py
+index 836d3bb..3bcb55e 100644
+--- a/20240318/1/server.py
++++ b/20240318/1/server.py
+@@ -22,7 +22,6 @@ class MultiUserDungeon:
+         self.player: Player = Player()
+         self.monsters: dict[tuple[int, int], Monster] = {}
+         self.weapons: dict[str, int] = {'sword': 10, 'spear': 15, 'axe': 20}
+-        self.custom_monsters: dict[str, Monster] = {"jgsbat": jgsbat}
+ 
+     def encounter(self, x: int, y: int) -> tuple[str, str]:
+         monster = self.monsters[(x, y)]
+@@ -45,6 +44,20 @@ class MultiUserDungeon:
+             return "True"
+         return "False"
+ 
++    def attack(self, weapon, name):
++        player_coordinates = (self.player.x, self.player.y)
++        if (
++                player_coordinates not in self.monsters
++                or self.monsters[player_coordinates].name != name
++        ):
++            return "False", '', ''
++        monster = self.monsters[player_coordinates]
++        damage = min(monster.hitpoints, self.weapons[weapon])
++        monster.hitpoints -= damage
++        if monster.hitpoints == 0:
++            del self.monsters[player_coordinates]
++        return "True", str(damage), str(monster.hitpoints)
++
+     def serve(self, conn, addr):
+         with conn:
+             while data := conn.recv(1024):
+@@ -57,6 +70,11 @@ class MultiUserDungeon:
+                         conn.sendall(self.add_monster(
+                             name, text, int(hp), int(x), int(y)
+                         ).encode())
++                    case ["attack", weapon, name]:
++                        conn.sendall(
++                            shlex.join(self.attack(weapon, name)).encode()
++                        )
++
+ 
+ if __name__ == "__main__":
+     host = "localhost" if len(sys.argv) < 2 else sys.argv[1]
+-- 
+2.34.1
+

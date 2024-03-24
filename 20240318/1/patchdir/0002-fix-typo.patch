@@ -1,0 +1,25 @@
+From aad521dfe4dd1f08cb54ecc141363a5479c2a5e1 Mon Sep 17 00:00:00 2001
+From: ilya <lystsov.ilya@gmail.com>
+Date: Sun, 24 Mar 2024 22:54:44 +0300
+Subject: [PATCH 02/13] fix typo
+
+---
+ 20240318/1/client.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/20240318/1/client.py b/20240318/1/client.py
+index e0c2be8..7a934ae 100644
+--- a/20240318/1/client.py
++++ b/20240318/1/client.py
+@@ -58,7 +58,7 @@ class MultiUserDungeonShell(cmd.Cmd):
+                 print(cowsay.cowsay(monster_message, cow=monster_name))
+ 
+     def do_up(self, arg: str) -> None:
+-        self.move("down")
++        self.move("up")
+ 
+     def do_down(self, arg: str) -> None:
+         self.move("down")
+-- 
+2.34.1
+
