@@ -35,7 +35,7 @@ class MultiUserDungeonShell(cmd.Cmd):
         super().__init__()
         self.socket = socket
         self.custom_monsters: dict[str, Any] = {"jgsbat": jgsbat}
-
+        self.weapons: dict[str, int] = {'sword': 10, 'spear': 15, 'axe': 20}
 
     def move(self, direction: str) -> None:
         delta_x, delta_y = 0, 0
@@ -109,6 +109,7 @@ class MultiUserDungeonShell(cmd.Cmd):
         if name not in cowsay.list_cows() and name not in self.custom_monsters:
             print("Cannot add unknown monster")
             return
+
         self.socket.sendall(f"addmon {name} {x} {y} {greetings_message}".encode())
         print(f"Added monster {name} to ({x}, {y}) saying {greetings_message}")
         server_response = shlex.split(self.socket.recv(1024).decode())
@@ -118,8 +119,56 @@ class MultiUserDungeonShell(cmd.Cmd):
 
     def do_addmon(self, arg: str) -> None:
         params = shlex.split(arg)
-        name, hitpoints, x, y, greetings_message = self.parse_addmon(params)
-        self.add_monster(name, hitpoints, x, y, greetings_message)
+        try:
+            name, hitpoints, x, y, greetings_message = self.parse_addmon(params)
+            self.add_monster(name, hitpoints, x, y, greetings_message)
+        except ValueError:
+            print("Invalid arguments")
+
+    def parse_attack(self, params: list) -> tuple[str, str]:
+        base_weapon = 'sword'
+        match params:
+            case [name, 'with', weapon]:
+                if weapon not in self.weapons:
+                    raise ValueError("Unknown weapon")
+                return weapon, name
+            case [name]:
+                return base_weapon, name
+            case _:
+                raise ValueError("Invalid arguments")
+
+    def attack(self, weapon: str, name: str) -> None:
+        self.socket.sendall(f"{weapon} {name}".encode())
+        server_response = shlex.split(self.socket.recv(1024).decode())
+        monster_presence_flag, damage, remaining_hp = server_response
+        if monster_presence_flag == "False":
+            print(f"No {name} here")
+            return
+        print(f"Attacked {name},  damage {damage} hp")
+        if remaining_hp == "0":
+            print(f"{name} died")
+        else:
+            print(f"{name} now has {remaining_hp}")
+
+    def do_attack(self, arg: str) -> None:
+        params = shlex.split(arg)
+        try:
+            weapon, name = self.parse_attack(params)
+            self.attack(weapon, name)
+        except ValueError as error:
+            print(error)
+
+    def complete_attack(self, text, line, begidx, endidx):
+        words = (line[:endidx] + ".").split()
+        if len(words) == 2:
+            all_monsters = cowsay.list_cows() + list(self.game.custom_monsters.keys())
+            return [
+                monster_name for monster_name in all_monsters
+                if monster_name.startswith(text)
+            ]
+
+        if len(words) == 4:
+            return [weapon for weapon in self.game.weapons if weapon.startswith(text)]
 
     def do_EOF(self, arg: str) -> bool:
         return True
