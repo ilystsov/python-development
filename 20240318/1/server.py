@@ -38,14 +38,14 @@ class MultiUserDungeon:
         else:
             return str(self.player.x), str(self.player.y), "False", '', ''
 
-    def add_monster(self, name, text, hp, x, y):
+    def add_monster(self, name, text, hp, x, y) -> str:
         if (x, y) in self.monsters:
             replaced_flag = "True"
         else: replaced_flag = "False"
         self.monsters[(x, y)] = Monster(name, text, hp)
         return replaced_flag
 
-    def attack(self, weapon, name):
+    def attack(self, weapon, name) -> tuple[str, str, str]:
         player_coordinates = (self.player.x, self.player.y)
         if (
                 player_coordinates not in self.monsters
@@ -59,7 +59,7 @@ class MultiUserDungeon:
             del self.monsters[player_coordinates]
         return "True", str(damage), str(monster.hitpoints)
 
-    def serve(self, conn, addr):
+    def serve(self, conn, addr) -> None:
         with conn:
             while data := conn.recv(1024):
                 match shlex.split(data.decode()):
