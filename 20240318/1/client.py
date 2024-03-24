@@ -113,7 +113,7 @@ class MultiUserDungeonShell(cmd.Cmd):
         self.socket.sendall(f"addmon {name} {hitpoints} {x} {y} {greetings_message}".encode())
         print(f"Added monster {name} to ({x}, {y}) saying {greetings_message}")
         server_response = shlex.split(self.socket.recv(1024).decode())
-        replaced_flag = server_response
+        replaced_flag = server_response[0]
         if replaced_flag == "True":
             print("Replaced the old monster")
 
@@ -138,7 +138,7 @@ class MultiUserDungeonShell(cmd.Cmd):
                 raise ValueError("Invalid arguments")
 
     def attack(self, weapon: str, name: str) -> None:
-        self.socket.sendall(f"{weapon} {name}".encode())
+        self.socket.sendall(f"attack {weapon} {name}".encode())
         server_response = shlex.split(self.socket.recv(1024).decode())
         monster_presence_flag, damage, remaining_hp = server_response
         if monster_presence_flag == "False":
@@ -161,14 +161,14 @@ class MultiUserDungeonShell(cmd.Cmd):
     def complete_attack(self, text, line, begidx, endidx):
         words = (line[:endidx] + ".").split()
         if len(words) == 2:
-            all_monsters = cowsay.list_cows() + list(self.game.custom_monsters.keys())
+            all_monsters = cowsay.list_cows() + list(self.custom_monsters.keys())
             return [
                 monster_name for monster_name in all_monsters
                 if monster_name.startswith(text)
             ]
 
         if len(words) == 4:
-            return [weapon for weapon in self.game.weapons if weapon.startswith(text)]
+            return [weapon for weapon in self.weapons if weapon.startswith(text)]
 
     def do_EOF(self, arg: str) -> bool:
         return True
