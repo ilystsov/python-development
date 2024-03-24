@@ -51,7 +51,7 @@ class MultiUserDungeonShell(cmd.Cmd):
         server_response = shlex.split(self.socket.recv(1024).decode())
         new_x, new_y, encounter_flag, monster_name, monster_message = server_response
         print(f"Moved to ({new_x}, {new_y})")
-        if encounter_flag:
+        if encounter_flag == "True":
             if monster_name in self.custom_monsters:
                 print(cowsay.cowsay(monster_message, cowfile=self.custom_monsters[monster_name]))
             else:
